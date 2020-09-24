@@ -8,11 +8,7 @@ register_matplotlib_converters()
 df = pd.read_csv('fcc-forum-pageviews.csv', index_col='date', sep=',', parse_dates=True)
 print(df)
 # Clean data
-print("2.5% percentile: {}".format(df['value'].quantile(0.025)))
-print("bottom of 2.5% percentile: {}".format(df['value'].quantile(0.975)))
-
 df = df[(df['value'] > df['value'].quantile(0.025)) & (df['value'] < df['value'].quantile(0.975))]
-print(df)
 
 def draw_line_plot():
     # Draw line plot
