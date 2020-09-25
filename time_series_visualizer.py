@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import warnings
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
@@ -114,19 +115,25 @@ def draw_box_plot():
     df_box["Page Views"] = df_box["value"]
     df_box["Month"] = df_box["month"]
     df_box["Year"] = df_box["year"]
-    g = sns.PairGrid(df_box, y_vars=["Page Views"], x_vars=["Year", "Month"], palette="bright")
-    g.map(fixed_boxplot)
-    fig = g.fig
-    fig.set_figheight(6)
-    fig.set_figwidth(16)
-    fig.axes[0].set_ylabel('Page Views')
-    fig.axes[1].set_ylabel('Page Views')
-    fig.axes[0].set_title('Year-wise Box Plot (Trend)')
-    fig.axes[1].set_title('Month-wise Box Plot (Seasonality)')
-    plt.tight_layout()
+    y_vars="Page Views"
+    x_vars=["Year", "Month"]
+    warnings.filterwarnings('ignore')
+    #créer une figure avec 2 Axes sur la même ligne
+    fig, ax = plt.subplots(1,2,figsize=(16,6))
+    sns.boxplot(y='Page Views',x="Year", data=df_box,ax=ax[0])
+    ax[0].set_title('Year-wise Box Plot (Trend)',fontsize = 14)
+    ax[0].set_xlabel('Year')
+    ax[0].set_ylabel('Page Views')
+    
+    
+    sns.boxplot(y='Page Views',x="Month", data=df_box, ax=ax[1])
+    ax[1].set_title('Month-wise Box Plot (Seasonality)',fontsize = 14)
+    ax[1].set_xlabel('Month')
+    ax[1].set_ylabel('Page Views')
 
-
-
+    #ajouter un texte à une figure   
+    # fig.text(0.4, 0.95, 'une variable numerique', fontsize = 16,color='r')
+    warnings.filterwarnings('default')
 
     # Save image and return fig (don't change this part)
     fig.savefig('box_plot.png')
