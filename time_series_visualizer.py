@@ -103,12 +103,12 @@ def draw_box_plot():
     df_box['year'] = [d.year for d in df_box.date]
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
-    print(df_box)
+  
     # adjust data
     # - first month of 2016 is may > boxplot starts with may
     # - resort by year desc > first month of 2019 is january 
     df_box.sort_values(by=['year','date'], ascending=[False, True], inplace=True)
-    print(df_box)
+
 
     # Draw box plots (using Seaborn)
     df_box["Page Views"] = df_box["value"]
