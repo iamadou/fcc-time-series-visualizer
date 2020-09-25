@@ -60,10 +60,7 @@ def draw_bar_plot():
 
     df_bar['year'] = df_bar.index.year
     df_bar['Month'] = df_bar.index.strftime('%B')
-    # df_grp = df_bar.groupby(['year', 'Month'])
-    # series
-    # df_grp['value'].apply(lambda x: x.mean())
-
+    
     # Draw bar plot
     #darkgrid, whitegrid, dark, white, ticks
     sns.set_style("ticks")
@@ -89,17 +86,44 @@ def draw_bar_plot():
 # /* ********************************************************************* */
 # /* ********************************************************************* */
 # /* ********************************************************************* */
+# https://github.com/mwaskom/seaborn/issues/915
+# TypeError: box() got an unexpected keyword argument 'label'
+def fixed_boxplot(*args, label=None, **kwargs):
+  sns.boxplot(*args, **kwargs, labels=[label])
+
+# /* ********************************************************************* */
+# /* ********************************************************************* */
 
 def draw_box_plot():
     # Prepare data for box plots (this part is done!)
     df_box = df.copy()
-    print(df_box)
+    # print(df_box)
     df_box.reset_index(inplace=True)
+    # print(df_box)
     df_box['year'] = [d.year for d in df_box.date]
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
-    # Draw box plots (using Seaborn)
+    print(df_box)
+    # adjust data
+    # - first month of 2016 is may > boxplot starts with may
+    # - resort by year desc > first month of 2019 is january 
+    df_box.sort_values(by=['year','date'], ascending=[False, True], inplace=True)
+    print(df_box)
 
+    # Draw box plots (using Seaborn)
+    df_box["Page Views"] = df_box["value"]
+    df_box["Month"] = df_box["month"]
+    df_box["Year"] = df_box["year"]
+    g = sns.PairGrid(df_box, y_vars=["Page Views"], x_vars=["Year", "Month"], palette="bright")
+    g.map(fixed_boxplot)
+    fig = g.fig
+    fig.set_figheight(6)
+    fig.set_figwidth(16)
+    fig.axes[0].set_ylabel('Page Views')
+    fig.axes[1].set_ylabel('Page Views')
+    fig.axes[0].set_title('Year-wise Box Plot (Trend)')
+    fig.axes[1].set_title('Month-wise Box Plot (Seasonality)')
+    plt.tight_layout()
 
 
 
